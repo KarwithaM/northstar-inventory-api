@@ -1,8 +1,8 @@
 # Learning & Blocker Journal: Solo Recon
 **Learner:** Sheila_Mbae
-**Date:** 17 AUG 2026  
-**Phase:** Block 1 - GitHub Setup & Initialization  
-**Time Boxed:** 45 Minutes | **Actual Time:** 32 Minutes
+**Date:** 17 AUG 2026 - 21 AUG 2026 
+**Phase:** DAY 1-5  
+**Time Boxed:** 5 DAYS (20 hours) | **Actual Time:** 4 DAY (10 hours)
 
 ## Log Entry 01: Repository Creation & README Initialization
 
@@ -79,3 +79,37 @@ The API successfully returned a 200 OK JSON response with the correct stock data
 - Constructing URLs and Testing 3 Scenarios (In Stock, Out of Stock, Not Found): 15 mins
 - Updating Journal & Taking Victory Screenshot: 10 mins
 - Buffer/Navigation: 5 mins
+
+--------------------------------------------------------------------------------------------------
+
+## Log Entry 04: Day 3 Original Build - Testing the Polling Workflow
+
+**Task:** Execute the polling workflow and verify the query endpoint serves updated cached data.
+
+**Challenge / Blocker:** 
+I encountered two significant constraints during testing:
+1. I do not have Node.js installed locally, so I could not execute `scripts/poll-warehouse.js` directly.
+2. Vercel serverless functions operate on a **read-only filesystem at runtime**, meaning a serverless endpoint cannot write to `cache.json` during execution. This is a documented Vercel limitation for ephemeral compute environments.
+
+**Resources Consulted:** 
+- Vercel Docs: Serverless Function Filesystem Limitations (https://vercel.com/docs/functions/runtimes#read-only-file-system)
+- Node.js Docs: `fs` module (https://nodejs.org/api/fs.html)
+
+**Decision & Resolution:** 
+Rather than abandoning the prototype or introducing an external database (Redis, MongoDB) which would exceed the time-box, I chose to **simulate the cron job execution manually via Git commits**. I:
+1. Edited `warehouse-source.json` to reflect a stock change (laptop: 15 → 14).
+2. Edited `cache.json` to match, simulating what the 5-minute poll would write.
+3. Verified the live `/api/stock?item=laptop` endpoint returned the updated cached value (`"stock": 14, "source": "cached_data"`).
+
+This proved the **query architecture works correctly** — the endpoint successfully reads from the cache layer, not the source. The polling mechanism itself is architecturally sound but would require a persistent write environment (e.g., a VPS, AWS Lambda with S3, or an external DB) for production deployment.
+
+**Production Note for Day 4 Pivot:** 
+This read-only filesystem limitation actually makes the Day 4 webhook pivot *easier*. Webhooks will write to an external database (like a JSONBin.io store or Google Sheet via API), and the `/api/stock.js` endpoint will read from it — no filesystem conflicts.
+
+**Time Breakdown:**
+- Simulating warehouse change via Git: 25 mins
+- Simulating poll execution via Git: 15 mins
+- Testing live endpoint (3 scenarios): 20 mins
+- Screenshots and verification: 5 mins
+- Journaling this critical discovery: 15 mins
+- Buffer: 5 mins
