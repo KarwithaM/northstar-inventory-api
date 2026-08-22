@@ -26,3 +26,29 @@ I learned that a "commit" is simply a saved snapshot of my work. I successfully 
 - Creating & Committing README: 8 mins
 - Journaling this entry: 5 mins
 - Buffer/Navigation: 6 mins
+
+---------------------------------------------------------------------------------------------------
+
+## Log Entry 02: Serverless Function Creation & File Structuring
+
+**Task:** Create the `/api` directory structure and write the initial `stock.js` serverless function to handle inventory queries.
+
+**Challenge / Blocker:** 
+I did not know how to create a folder using only the GitHub web interface, as there is no "New Folder" button. 
+I also needed to understand how Vercel would know to run this specific file.
+
+**Resources Consulted:** 
+- Vercel Docs: Serverless Functions Overview (https://vercel.com/docs/functions/serverless-functions)
+- GitHub UI exploration (discovering the `folder/filename.ext` naming convention).
+
+**Decision & Resolution:** 
+I learned that typing `api/stock.js` in the file name input automatically generates the `api` folder and places `stock.js` inside it. 
+I also learned that Vercel automatically maps any file inside an `/api` directory to a live URL route (e.g., `/api/stock`). 
+I pasted the provided logic, which uses a simple JavaScript object as a mock database, and committed it with a 'feat:' prefix.
+
+**Time Breakdown:**
+- Creating api/stock.js structure: 25 mins
+- Pasting and reviewing code logic: 15 mins
+- Committing with proper convention: 10 mins
+- Updating Journal: 5 mins
+- Buffer/Navigation: 3 mins
