@@ -1,25 +1,31 @@
-// Northstar Retail Co. - Inventory API
+// Northstar Retail Co. - Inventory Query Endpoint
+const fs = require('fs');
+const path = require('path');
+
 module.exports = (req, res) => {
-  // 1. Fake database of items and their stock levels
-  const inventory = {
-    laptop: 15,
-    mouse: 0,
-    keyboard: 42
-  };
+  // 1. Define the path to our cache file
+  const cachePath = path.join(process.cwd(), 'cache.json');
+  
+  try {
+    // 2. Read the cached data synchronously
+    const cacheData = fs.readFileSync(cachePath, 'utf8');
+    const inventory = JSON.parse(cacheData);
 
-  // 2. Get the item name the user is asking about from the URL
-  const itemName = req.query.item;
+    // 3. Get the requested item from the URL query
+    const itemName = req.query.item;
 
-  // 3. Check if the item exists in our fake database
-  if (inventory[itemName] !== undefined) {
-    // If it exists, send back a 200 (Success) status with the stock info
-    res.status(200).json({ 
-      item: itemName, 
-      stock: inventory[itemName], 
-      status: inventory[itemName] > 0 ? "In Stock" : "Out of Stock" 
-    });
-  } else {
-    // If it doesn't exist, send back a 404 (Not Found) status
-    res.status(404).json({ error: "Item not found in Northstar database" });
+    // 4. Check if item exists in the cache
+    if (inventory[itemName] !== undefined) {
+      res.status(200).json({ 
+        item: itemName, 
+        stock: inventory[itemName], 
+        status: inventory[itemName] > 0 ? "In Stock" : "Out of Stock",
+        source: "cached_data" // Proves we are reading from the cache!
+      });
+    } else {
+      res.status(404).json({ error: "Item not found in Northstar cache" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Failed to read inventory cache" });
   }
 };
